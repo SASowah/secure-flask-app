@@ -1,0 +1,14 @@
+---
+- name: Download Jenkins Agent JAR
+  get_url:
+    url: "http://jenkins-master:8080/jnlpJars/agent.jar"
+    dest: "/opt/jenkins/agent.jar"
+    owner: jenkins
+    group: jenkins
+    mode: '0644'
+
+- name: Create Systemd Service for Jenkins Agent
+  template:
+    src: jenkins_agent.service.j2
+    dest: /etc/systemd/system/jenkins_agent.service
+  notify: Restart Jenkins Agent
