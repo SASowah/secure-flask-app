@@ -13,3 +13,8 @@
     state: restarted
     enabled: yes
     daemon_reload: yes
+
+- name: Restart MongoDB to apply changes
+  systemd:
+    name: mongod
+    state: restarted
