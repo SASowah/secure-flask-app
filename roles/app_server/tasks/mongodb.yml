@@ -1,0 +1,39 @@
+---
+- name: Install and Configure MongoDB
+  become: yes
+
+  - name: Import MongoDB public GPG key
+    apt_key:
+      url: https://www.mongodb.org/static/pgp/server-6.0.asc
+      state: present   
+
+  - name: Add MongoDB repository
+    apt_repository:
+      repo: "deb [ arch=amd64 ] https://repo.mongodb.org/apt/ubuntu focal/mongodb-org/6.0 multiverse"
+      tate: present    
+        
+  - name: Update package list
+    apt:
+      update_cache: yes    
+        
+  - name: Install MongoDB
+    apt:
+      name: mongodb-org
+      state: present    
+      
+  - name: Start and enable MongoDB service
+    systemd:
+      name: mongod
+      state: started
+      enabled: yes    
+      
+  - name: Configure MongoDB to allow remote connections
+    lineinfile:
+      path: /etc/mongod.conf
+      regexp: '^  bindIp: 127.0.0.1'
+      line: '  bindIp: 0.0.0.0'
+      backrefs: yes   
+  - name: Restart MongoDB to apply changes
+    systemd:
+      name: mongod
+      state: restarted

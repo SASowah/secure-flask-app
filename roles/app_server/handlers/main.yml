@@ -1,2 +1,15 @@
 ---
 # handlers file for roles/app_server
+- name: Restart Gunicorn
+  systemd:
+    name: gunicorn
+    state: restarted
+    enabled: yes
+    daemon_reload: yes
+
+- name: Restart Nginx
+  systemd:
+    name: nginx
+    state: restarted
+    enabled: yes
+    daemon_reload: yes
