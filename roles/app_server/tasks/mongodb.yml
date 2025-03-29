@@ -23,10 +23,4 @@
       name: mongod
       state: started
       enabled: yes    
-          
-  #- name: Configure MongoDB to allow remote connections
-    lineinfile:
-      path: /etc/mongod.conf
-      regexp: '^  bindIp: 127.0.0.1'
-      line: '  bindIp: 0.0.0.0'
-      backrefs: yes   
+  
