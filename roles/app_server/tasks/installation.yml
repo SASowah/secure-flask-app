@@ -37,6 +37,6 @@
       - Flask
       - gunicorn
     executable: pip3
-    python3-virtualenv: /opt/myapp/venv
+    virtualenv: /opt/myapp/venv
   when: ansible_distribution in ["Ubuntu","CentOS"]
 
