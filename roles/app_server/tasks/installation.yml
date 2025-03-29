@@ -26,7 +26,7 @@
   when: ansible_distribution == "CentOS"
 
 - name: create a virtual environment
-  cammand:
+  command:
     cmd: "python3 -m venv /opt/myapp/venv"
     creates: /opt/myapp/venv
 
