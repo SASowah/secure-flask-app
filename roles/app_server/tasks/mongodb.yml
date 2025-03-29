@@ -7,7 +7,7 @@
 - name: Add MongoDB repository
   apt_repository:
       repo: "deb [ arch=amd64 ] https://repo.mongodb.org/apt/ubuntu focal/mongodb-org/6.0 multiverse"
-      tate: present    
+      state: present    
         
 - name: Update package list
   apt:
