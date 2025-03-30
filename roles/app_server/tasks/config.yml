@@ -12,9 +12,9 @@
 
 # New: Certbot SSL Configuration
 - name: Obtain SSL Certificate with Certbot
-  command: certbot certonly --nginx --agree-tos --email your@email.com -d yourdomain.com
+  command: certbot certonly --nginx --agree-tos --email samsoo18@yahoo.com -d 16.171.239.198
   args:
-    creates: /etc/letsencrypt/live/yourdomain.com/fullchain.pem
+    creates: /etc/letsencrypt/live/16.171.239.198/fullchain.pem
 
 - name: Set up auto-renewal for Certbot
   cron:
@@ -22,6 +22,7 @@
     job: "certbot renew --quiet"
     state: present
     special_time: monthly
+
 
 - name: Ensure MongoDB config file exists
   stat:
