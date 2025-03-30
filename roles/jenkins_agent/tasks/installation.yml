@@ -1,7 +1,7 @@
 ---
-- name: Install Java (Jenkins agent dependency)
+- name: Install Java 17 (Jenkins agent dependency)
   become: yes
-  command: dnf5 install -y java
+  command: dnf5 install -y java-17-openjdk java-17-openjdk-devel
 
 - name: Create Jenkins User
   become: yes
@@ -10,4 +10,5 @@
     shell: /bin/bash
     create_home: true
     home: /home/jenkins
+...
 
