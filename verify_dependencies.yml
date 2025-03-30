@@ -1,0 +1,45 @@
+- name: Verify Software & Dependencies on All Servers
+  hosts: all  # Change to specific groups like 'app-server' or 'jenkins-master' if needed
+  become: yes
+  tasks:
+
+    - name: Check Java Version
+      command: java -version
+      register: java_version
+      ignore_errors: yes
+
+    - name: Check Nginx Status
+      command: nginx -t
+      register: nginx_status
+      ignore_errors: yes
+
+    - name: Check Certbot Version
+      command: certbot --version
+      register: certbot_version
+      ignore_errors: yes
+
+    - name: Check Ansible Version
+      command: ansible --version
+      delegate_to: localhost
+      register: ansible_version
+      ignore_errors: yes
+
+    - name: Check MongoDB Status
+      command: systemctl status mongod
+      register: mongodb_status
+      ignore_errors: yes
+
+    - name: Check Flask & Gunicorn Version
+      command: /opt/myapp/venv/bin/gunicorn --version
+      register: gunicorn_version
+      ignore_errors: yes
+
+    - name: Print Results
+      debug:
+        msg:
+          - "Java Version: {{ java_version.stdout | default('Not Installed') }}"
+          - "Nginx Status: {{ nginx_status.stdout | default('Error') }}"
+          - "Certbot Version: {{ certbot_version.stdout | default('Not Installed') }}"
+          - "Ansible Version: {{ ansible_version.stdout | default('Not Available') }}"
+          - "MongoDB Status: {{ mongodb_status.stdout | default('Not Installed') }}"
+          - "Gunicorn Version: {{ gunicorn_version.stdout | default('Not Installed') }}"
