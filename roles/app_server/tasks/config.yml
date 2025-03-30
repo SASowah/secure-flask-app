@@ -11,17 +11,48 @@
   notify: Restart Nginx
 
 # New: Certbot SSL Configuration
-- name: Obtain SSL Certificate with Certbot
-  command: certbot certonly --nginx --agree-tos --email samsoo18@yahoo.com -d 16.171.239.198
-  args:
-    creates: /etc/letsencrypt/live/16.171.239.198/fullchain.pem
+- name: Create SSL directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: 0755
+  with_items:
+    - /etc/ssl/private
+    - /etc/ssl/certs
+  become: yes
 
-- name: Set up auto-renewal for Certbot
+- name: Generate self-signed SSL private key
+  openssl_privatekey:
+    path: /etc/ssl/private/selfsigned.key
+    size: 2048
+    mode: 0600
+  become: yes
+
+- name: Create self-signed SSL certificate
+  openssl_certificate:
+    path: /etc/ssl/certs/selfsigned.crt
+    privatekey_path: /etc/ssl/private/selfsigned.key
+    common_name: "{{ ansible_default_ipv4.address }}"
+    basic_constraints:
+      - CA:FALSE
+    key_usage:
+      - digitalSignature
+      - keyEncipherment
+    subject_alt_name: "IP:{{ ansible_default_ipv4.address }}"
+    valid_for: 365
+  become: yes
+
+- name: Set up periodic certificate renewal
   cron:
-    name: "Certbot Auto Renew"
-    job: "certbot renew --quiet"
+    name: "Regenerate Self-Signed Certificate"
+    job: >
+      openssl req -x509 -nodes -days 365 -new -key /etc/ssl/private/selfsigned.key 
+      -out /etc/ssl/certs/selfsigned.crt 
+      -subj "/CN={{ ansible_default_ipv4.address }}" 
+      -addext "subjectAltName=IP:{{ ansible_default_ipv4.address }}"
     state: present
     special_time: monthly
+  become: yes
 
 
 - name: Ensure MongoDB config file exists
