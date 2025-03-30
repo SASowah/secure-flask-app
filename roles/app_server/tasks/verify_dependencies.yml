@@ -1,8 +1,4 @@
-- name: Verify Software & Dependencies on All Servers
-  hosts: all  # Change to specific groups like 'app-server' or 'jenkins-master' if needed
-  become: yes
-  tasks:
-
+ # Change to specific groups like 'app-server' or 'jenkins-master' if needed
     - name: Check Java Version
       command: java -version
       register: java_version
