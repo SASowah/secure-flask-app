@@ -7,7 +7,7 @@
 
 - name: Install Java 17 (Jenkins agent dependency)
   become: yes
-  dnf:
+  dnf5:
     name: java-17-openjdk-devel
     state: present
     update_cache: yes
