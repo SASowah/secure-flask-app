@@ -1,10 +1,7 @@
 ---
 - name: Install Java (Jenkins agent dependency)
-  become: yes #Ensure admin privileges
-  dnf:
-    name: java
-    state: present # Ensures updates
-    update_cache: yes
+  become: yes
+  command: dnf5 install -y java
 
 - name: Create Jenkins User
   become: yes
