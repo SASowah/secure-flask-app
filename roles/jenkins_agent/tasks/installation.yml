@@ -2,7 +2,7 @@
 - name: Install Java 17 (Jenkins agent dependency)
   become: yes #Ensure admin privileges
   yum:
-    name: java-17-openjdk
+    name: java-17-openjdk-devel
     state: present # Ensures updates
     update_cache: yes
 
