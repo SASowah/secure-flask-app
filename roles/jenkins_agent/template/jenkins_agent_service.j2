@@ -5,7 +5,7 @@ After=network.target
 [Service]
 User=jenkins
 Group=jenkins
-ExecStart=/usr/bin/java -jar /opt/jenkins/agent.jar -jnlpUrl http://jenkins-master:8080/computer/agent-node/slave-agent.jnlp
+ExecStart=/usr/bin/java -jar /opt/jenkins/agent.jar -jnlpUrl http://172.31.30.100:8080/computer/agent-node/slave-agent.jnlp
 Restart=always
 RestartSec=5
 
