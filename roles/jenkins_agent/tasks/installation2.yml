@@ -1,0 +1,21 @@
+- name: Install Python on Jenkins Agent (if missing)
+  become: yes
+  dnf:
+    name: python3
+    state: present
+    update_cache: yes
+
+- name: Install Java 17 (Jenkins agent dependency)
+  become: yes
+  dnf:
+    name: java-17-openjdk-devel
+    state: present
+    update_cache: yes
+
+- name: Create Jenkins User
+  become: yes
+  user:
+    name: jenkins
+    shell: /bin/bash
+    create_home: true
+    home: /home/jenkins
