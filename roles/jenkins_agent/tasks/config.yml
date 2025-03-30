@@ -9,7 +9,7 @@
 
 - name: Download Jenkins Agent JAR
   get_url:
-    url: "http://jenkins-master:8080/jnlpJars/agent.jar"
+    url: "http://172.31.30.100:8080/jnlpJars/agent.jar"
     dest: "/opt/jenkins/agent.jar"
     owner: jenkins
     group: jenkins
