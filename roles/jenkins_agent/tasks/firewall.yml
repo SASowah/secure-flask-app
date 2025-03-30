@@ -2,7 +2,6 @@
 - name: Allow Jenkins Agent  TCP port 50000 for firewalld
   firewalld:
     port: 50000/tcp
-    protocol: tcp
     permanent: yes
     immediate: yes
     state: enabled
