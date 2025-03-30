@@ -1,12 +1,9 @@
 ---
 - name: Install Firewalld and Python Firewall Bindings
-  become: yes
-  dnf:
-    name:
-      - firewalld
-      - python3-firewall
-    state: present
-    update_cache: yes
+  command: sudo dnf install -y firewalld python3-firewall
+  args:
+    creates: /usr/sbin/firewalld  # Ensures the command runs only if Firewalld isn't installed
+
 
 - name: Enable and Start Firewalld
   become: yes
