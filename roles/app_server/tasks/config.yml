@@ -10,6 +10,19 @@
     dest: /etc/nginx/nginx.conf
   notify: Restart Nginx
 
+# New: Certbot SSL Configuration
+- name: Obtain SSL Certificate with Certbot
+  command: certbot certonly --nginx --agree-tos --email your@email.com -d yourdomain.com
+  args:
+    creates: /etc/letsencrypt/live/yourdomain.com/fullchain.pem
+
+- name: Set up auto-renewal for Certbot
+  cron:
+    name: "Certbot Auto Renew"
+    job: "certbot renew --quiet"
+    state: present
+    special_time: monthly
+
 - name: Ensure MongoDB config file exists
   stat:
     path: /etc/mongod.conf
