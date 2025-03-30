@@ -33,6 +33,7 @@
     path: /etc/ssl/certs/selfsigned.crt
     privatekey_path: /etc/ssl/private/selfsigned.key
     common_name: "{{ ansible_default_ipv4.address }}"
+    provider: selfsigned
     basic_constraints:
       - CA:FALSE
     key_usage:
