@@ -21,36 +21,33 @@
     - /etc/ssl/certs
   become: yes
 
-- name: Generate self-signed SSL private key
+- name: Generate private key
   openssl_privatekey:
     path: /etc/ssl/private/selfsigned.key
     size: 2048
     mode: 0600
   become: yes
 
-- name: Create self-signed SSL certificate
+- name: Generate a CSR (Certificate Signing Request)
+  openssl_csr:
+    path: /etc/ssl/private/selfsigned.csr
+    privatekey_path: /etc/ssl/private/selfsigned.key
+    common_name: "{{ ansible_default_ipv4.address }}"
+  become: yes
+
+- name: Generate self-signed certificate
   openssl_certificate:
     path: /etc/ssl/certs/selfsigned.crt
     privatekey_path: /etc/ssl/private/selfsigned.key
-    common_name: "{{ ansible_default_ipv4.address }}"
+    csr_path: /etc/ssl/private/selfsigned.csr
     provider: selfsigned
-    basic_constraints:
-      - CA:FALSE
-    key_usage:
-      - digitalSignature
-      - keyEncipherment
-    subject_alt_name: "IP:{{ ansible_default_ipv4.address }}"
-    valid_for: 365
+    selfsigned_not_after: "+365d"
   become: yes
 
-- name: Set up periodic certificate renewal
+- name: Set up periodic certificate regeneration
   cron:
     name: "Regenerate Self-Signed Certificate"
-    job: >
-      openssl req -x509 -nodes -days 365 -new -key /etc/ssl/private/selfsigned.key 
-      -out /etc/ssl/certs/selfsigned.crt 
-      -subj "/CN={{ ansible_default_ipv4.address }}" 
-      -addext "subjectAltName=IP:{{ ansible_default_ipv4.address }}"
+    job: "openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/private/selfsigned.key -out /etc/ssl/certs/selfsigned.crt -subj '/CN={{ ansible_default_ipv4.address }}'"
     state: present
     special_time: monthly
   become: yes
