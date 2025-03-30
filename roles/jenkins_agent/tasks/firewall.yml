@@ -1,14 +1,13 @@
 ---
 - name: Install python3-firewall (required for firewalld module)
   become: yes
-  dnf:
-    name: python3-firewall
-    state: present
+  command: dnf5 install -y python3-firewall
     update_cache: yes
-    
+
 - name: Allow Jenkins Agent  TCP port 50000 for firewalld
   firewalld:
     port: 50000/tcp
     permanent: yes
     immediate: yes
     state: enabled
+...
