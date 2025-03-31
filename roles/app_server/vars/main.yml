@@ -1,2 +1,5 @@
 ---
 # vars file for roles/app_server
+app_user: ubuntu
+app_group: ubuntu
+app_dir: /opt/flask_app

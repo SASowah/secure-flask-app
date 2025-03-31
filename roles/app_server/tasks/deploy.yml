@@ -1,17 +1,17 @@
 - name: Ensure app directory exists
   file:
-    path: /opt/flask_app
+    path: {{app_dir}}
     state: directory
-    owner: ubuntu
-    group: ubuntu
+    owner: {{app_user}}
+    group: {{app_group}}
     mode: '0755'
 
 - name: Copy application files
   copy:
     src: "{{ playbook_dir }}/../../src/{{ item }}"
-    dest: /opt/flask_app/
-    owner: ubuntu
-    group: ubuntu
+    dest: {{app_dir}}
+    owner: {{app_user}}
+    group: {{app_group}}
     mode: '0644'
   loop:
     - app.py
