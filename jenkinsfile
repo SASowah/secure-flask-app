@@ -44,13 +44,7 @@ pipeline {
     }
 
     post {
-        success {
-            echo '✅ Build, Testing, SonarQube Analysis, and Deployment Successful!'
-            emailext subject: "Jenkins Build Success: ${env.JOB_NAME}",
-                     body: "Good news! The Jenkins build ${env.BUILD_NUMBER} was successful.",
-                     recipientProviders: [[$class: 'DevelopersRecipientProvider']],
-                     to: 'samniisowah866@gmail.com'
-        }
+        
         failure {
             echo '❌ Build Failed! Check logs for issues.'
         }
