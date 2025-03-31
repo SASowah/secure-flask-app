@@ -1,0 +1,58 @@
+pipeline {
+    agent { label 'flask-agent' }
+   
+    stages {
+        stage('Checkout Code') {
+            steps {
+                script {
+                    git branch: "dev",
+                        url: 'https://github.com/SASowah/secure-flask-app.git'
+                }
+            }
+        }
+
+        stage('Set up Python Environment') {
+            steps {
+                sh '''
+                python3 -m venv venv
+                source venv/bin/activate
+                pip install --upgrade pip
+                pip install -r requirements.txt
+                '''
+            }
+        }
+
+        stage('Run Tests') {
+            steps {
+                sh '''
+                source venv/bin/activate
+                pytest --junitxml=report.xml
+                '''
+            }
+        }
+
+
+        stage('Deploy with Ansible') {
+            steps {
+                script {
+                    sh '''
+                    ansible-playbook -i inventory.ini deploy.yml
+                    '''
+                }
+            }
+        }
+    }
+
+    post {
+        success {
+            echo '✅ Build, Testing, SonarQube Analysis, and Deployment Successful!'
+            emailext subject: "Jenkins Build Success: ${env.JOB_NAME}",
+                     body: "Good news! The Jenkins build ${env.BUILD_NUMBER} was successful.",
+                     recipientProviders: [[$class: 'DevelopersRecipientProvider']],
+                     to: 'samniisowah866@gmail.com'
+        }
+        failure {
+            echo '❌ Build Failed! Check logs for issues.'
+        }
+    }
+}

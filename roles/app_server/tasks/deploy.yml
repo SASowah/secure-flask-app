@@ -1,0 +1,33 @@
+- name: Ensure app directory exists
+  file:
+    path: /opt/flask_app
+    state: directory
+    owner: ubuntu
+    group: ubuntu
+    mode: '0755'
+
+- name: Copy application files
+  copy:
+    src: "{{ playbook_dir }}/../../src/{{ item }}"
+    dest: /opt/flask_app/
+    owner: ubuntu
+    group: ubuntu
+    mode: '0644'
+  loop:
+    - app.py
+    - init.db.js
+    - requirements.txt
+
+- name: Install Python dependencies
+  pip:
+    requirements: /opt/flask_app/requirements.txt
+    executable: pip3
+    virtualenv: /opt/flask_app/venv  
+
+- name: Deploy systemd service for Flask
+  template:
+    src: flask_app.service.j2
+    dest: /etc/systemd/system/flask_app.service
+  notify: Restart Flask App
+
+...
