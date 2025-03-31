@@ -5,7 +5,7 @@ pipeline {
         stage('Checkout Code') {
             steps {
                 script {
-                    git branch: "dev",
+                    git branch: "main",
                         url: 'https://github.com/SASowah/secure-flask-app.git'
                 }
             }
@@ -44,7 +44,7 @@ pipeline {
     }
 
     post {
-        
+
         failure {
             echo '❌ Build Failed! Check logs for issues.'
         }
