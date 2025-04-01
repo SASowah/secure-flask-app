@@ -1,15 +1,15 @@
 ---
-- name: Install Python 3, pip, and virtualenv
-  become: yes
-  command: dnf install -y python3 python3-pip python3-virtualenv
-  args:
+- name: Install Python 3
+  command: dnf install -y python3
     creates: /usr/bin/python3
 
-- name: Install Python 3, pip, and virtualenv
-  become: yes
+- name: Install pip
   command: dnf install -y python3-pip
-  
 
+- name: Install virtualenv
+  become: yes
+  command: dnf install -y python3-virtualenv
+  
 - name: Install Firewalld and Python firewall bindings
   become: yes
   command: dnf install -y firewalld python3-firewall
