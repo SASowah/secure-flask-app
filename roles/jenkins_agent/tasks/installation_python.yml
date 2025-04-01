@@ -1,17 +1,30 @@
 ---
-- name: Install Firewalld and Python Firewall Bindings
-  command: sudo dnf install -y firewalld python3-firewall
-  args:
-    creates: /usr/sbin/firewalld  # Ensures the command runs only if Firewalld isn't installed
-
-
-- name: Enable and Start Firewalld
+- name: Install Python and dependencies (RHEL/CentOS)
   become: yes
-  service:
+  ansible.builtin.dnf:
+    name:
+      - python3
+      - python3-pip
+      - python3-virtualenv
+    state: present
+
+- name: Install Firewalld and Python bindings
+  become: yes
+  ansible.builtin.dnf:
+    name:
+      - firewalld
+      - python3-firewall
+    state: present
+
+- name: Ensure Firewalld is enabled and running
+  become: yes
+  ansible.builtin.service:
     name: firewalld
     enabled: yes
     state: started
 
-- name: Ensure Firewalld Default Zone is Set
+- name: Set default firewall zone to public
   become: yes
-  shell: firewall-cmd --get-default-zone || firewall-cmd --set-default-zone=public
+  ansible.builtin.command: firewall-cmd --set-default-zone=public
+  changed_when: false  # Makes the task idempotent (no "changed" status)
+  when: "'public' not in (ansible_facts.firewalld.default_zone | default(''))"
