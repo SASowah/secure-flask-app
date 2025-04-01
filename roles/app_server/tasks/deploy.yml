@@ -17,7 +17,7 @@
   loop:
       - app.py
       - init.db.js
-       - requirements.txt
+      - requirements.txt
 
 - name: Install Python dependencies
   pip:
