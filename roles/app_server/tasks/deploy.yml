@@ -1,9 +1,7 @@
 ---
 - name: Deploy Flask Application
-  hosts: app_server  # Target group from your inventory file
   become: yes  # Run tasks with sudo
 
-  tasks:
   - name: Ensure app directory exists
     file:
       path: "{{ app_dir }}"
