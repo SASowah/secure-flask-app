@@ -3,6 +3,12 @@
   become: yes
   command: dnf5 install -y java-17-openjdk java-17-openjdk-devel
 
+- name: Install Git
+  become: yes
+  dnf:  # Use the Ansible dnf module for idempotency
+    name: git
+    state: present
+
 - name: Create Jenkins User
   become: yes
   user:
