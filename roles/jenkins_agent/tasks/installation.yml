@@ -5,9 +5,9 @@
 
 - name: Install Ansible
   become: yes
-  dnf:  # Use "apt" for Ubuntu/Debian
-    name: ansible
-    state: present
+  command: dnf install -y ansible  # For RHEL/CentOS
+  args:
+    creates: /usr/bin/ansible-playbook  # Ensure idempotency
 
 - name: Install Git
   become: yes
