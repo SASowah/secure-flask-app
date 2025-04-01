@@ -5,9 +5,7 @@
 
 - name: Install Git
   become: yes
-  dnf:  # Use the Ansible dnf module for idempotency
-    name: git
-    state: present
+  command: dnf5 install -y git
 
 - name: Create Jenkins User
   become: yes
