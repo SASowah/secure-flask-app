@@ -18,7 +18,13 @@
     enabled: yes
     state: started
 
-- name: Ensure Firewalld Default Zone is Set
+- name: Check current default firewall zone
   become: yes
-  shell: firewall-cmd --get-default-zone || firewall-cmd --set-default-zone=public
-  when: current_zone.stdout != 'public'  # Only run if zone is not already public
+  command: firewall-cmd --get-default-zone
+  register: current_zone
+  changed_when: false  # No "changed" status for this check
+
+- name: Set default firewall zone to public
+  become: yes
+  command: firewall-cmd --set-default-zone=public
+  when: current_zone.stdout != 'public'  # Idempotently set zone
