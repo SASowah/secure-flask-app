@@ -1,17 +1,17 @@
 - name: Ensure app directory exists
   file:
-    path: {{app_dir}}
+    path: "{{app_dir}}"
     state: directory
-    owner: {{app_user}}
-    group: {{app_group}}
+    owner: "{{app_user}}"
+    group: "{{app_group}}"
     mode: '0755'
 
 - name: Copy application files
   copy:
     src: "{{ playbook_dir }}/../../src/{{ item }}"
-    dest: {{app_dir}}
-    owner: {{app_user}}
-    group: {{app_group}}
+    dest: "{{app_dir}}"
+    owner: "{{app_user}}"
+    group: "{{app_group}}"
     mode: '0644'
   loop:
     - app.py
