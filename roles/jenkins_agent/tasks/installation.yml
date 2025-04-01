@@ -3,6 +3,12 @@
   become: yes
   command: dnf5 install -y java-17-openjdk java-17-openjdk-devel
 
+- name: Install Ansible
+  become: yes
+  dnf:  # Use "apt" for Ubuntu/Debian
+    name: ansible
+    state: present
+
 - name: Install Git
   become: yes
   command: dnf5 install -y git
