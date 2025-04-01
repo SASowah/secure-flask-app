@@ -1,6 +1,7 @@
 ---
 - name: Install Python 3
   command: dnf install -y python3
+  args:
     creates: /usr/bin/python3
 
 - name: Install pip
