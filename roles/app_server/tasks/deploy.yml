@@ -1,49 +1,37 @@
 ---
 - name: Deploy Flask Application
-  hosts: app_servers  # Target group from your inventory file
+  hosts: app_server  # Target group from your inventory file
   become: yes  # Run tasks with sudo
-  vars:
-    app_dir: /opt/flask_app  # Define variables here (or in group_vars)
-    app_user: flask-user
-    app_group: flask-group
 
   tasks:
-    - name: Ensure app directory exists
-      file:
-        path: "{{ app_dir }}"
-        state: directory
-        owner: "{{ app_user }}"
-        group: "{{ app_group }}"
-        mode: '0755'
+  - name: Ensure app directory exists
+    file:
+      path: "{{ app_dir }}"
+      state: directory
+      owner: "{{ app_user }}"
+      group: "{{ app_group }}"
+      mode: '0755'
 
-    - name: Copy application files
-      copy:
-        src: "{{ playbook_dir }}/../../src/{{ item }}"
-        dest: "{{ app_dir }}"
-        owner: "{{ app_user }}"
-        group: "{{ app_group }}"
-        mode: '0644'
-      loop:
+  - name: Copy application files
+    copy:
+      src: "{{ playbook_dir }}/../../src/{{ item }}"
+      dest: "{{ app_dir }}"
+      owner: "{{ app_user }}"
+      group: "{{ app_group }}"
+      mode: '0644'
+    loop:
         - app.py
         - init.db.js
         - requirements.txt
 
-    - name: Install Python dependencies
-      pip:
-        requirements: "{{ app_dir }}/requirements.txt"
-        executable: pip3
-        virtualenv: "{{ app_dir }}/venv"
+  - name: Install Python dependencies
+    pip:
+      requirements: "{{ app_dir }}/requirements.txt"
+      executable: pip3
+      virtualenv: "{{ app_dir }}/venv"
 
-    - name: Deploy systemd service for Flask
-      template:
+  - name: Deploy systemd service for Flask
+    template:
         src: flask_app.service.j2
         dest: /etc/systemd/system/flask_app.service
-      notify: Restart Flask App
-
-  handlers:
-    - name: Restart Flask App
-      systemd:
-        name: flask_app
-        state: restarted
-        enabled: yes
-        daemon_reload: yes
+    notify: Restart Flask App

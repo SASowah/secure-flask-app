@@ -24,4 +24,5 @@
   systemd:
     name: flask_app
     state: restarted
+    enabled: yes
     daemon_reload: yes
