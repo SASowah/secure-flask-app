@@ -5,14 +5,11 @@
   args:
     creates: /usr/bin/python3
 
-- name: Install Firewalld and Python Firewall Bindings
+- name: Install Firewalld and Python firewall bindings
   become: yes
-  dnf:
-    name:
-      - firewalld
-      - python3-firewall
-    state: present
-    update_cache: yes
+  command: dnf install -y firewalld python3-firewall
+  args:
+    creates: /usr/sbin/firewalld  # Runs only if Firewalld isn't installed
 
 - name: Enable and Start Firewalld
   become: yes
