@@ -2,6 +2,6 @@
 #run app_server
 - name: Configure App Server
   hosts: app_server
-  become: yes
+  become: yes # This enables privilege escalation
   roles:
     - app_server

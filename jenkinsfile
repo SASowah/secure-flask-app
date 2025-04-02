@@ -1,11 +1,16 @@
 pipeline {
     agent { label 'flask-agent' }
 
+    environment {
+        ARTIFACT_NAME = "secure-flask-app.tar.gz"
+        HASH_FILE = "hash.txt"
+    }
+
     stages {
         stage('Checkout Code') {
             steps {
                 script {
-                    git branch: "dev",
+                    git branch: "main",
                         url: 'https://github.com/SASowah/secure-flask-app.git'
                 }
             }
@@ -22,31 +27,6 @@ pipeline {
             }
         }
 
-        stage('Generate Artifact Hash') {
-            steps {
-                sh '''
-                source venv/bin/activate
-                tar -cf app.tar.gz app.py init.db.js requirements.txt
-                sha256sum app.tar.gz > artifact_hash.txt
-                '''
-            }
-        }
-
-        stage('Verify Artifact Integrity') {
-            steps {
-                script {
-                    def expectedHash = sh(script: "cat artifact_hash.txt | awk '{print $1}'", returnStdout: true).trim()
-                    def calculatedHash = sh(script: "sha256sum app.tar.gz | awk '{print $1}'", returnStdout: true).trim()
-                    
-                    if (expectedHash != calculatedHash) {
-                        error("❌ Artifact integrity check failed! Expected: ${expectedHash}, but got: ${calculatedHash}")
-                    } else {
-                        echo "✅ Artifact integrity verified successfully!"
-                    }
-                }
-            }
-        }
-
         stage('Run Tests') {
             steps {
                 sh '''
@@ -56,11 +36,36 @@ pipeline {
             }
         }
 
+        stage('Package Application') {
+            steps {
+                sh '''
+                tar -czvf $ARTIFACT_NAME app.py requirements.txt templates/
+                sha256sum $ARTIFACT_NAME | awk '{print $1}' > $HASH_FILE
+                '''
+            }
+        }
+
+        stage('Verify Artifact Integrity') {
+            steps {
+                sh '''
+                CALCULATED_HASH=$(sha256sum $ARTIFACT_NAME | awk '{print $1}')
+                EXPECTED_HASH=$(cat $HASH_FILE)
+                
+                if [ "$CALCULATED_HASH" != "$EXPECTED_HASH" ]; then
+                    echo "❌ Artifact integrity verification failed!"
+                    exit 1
+                else
+                    echo "✅ Artifact integrity verified!"
+                fi
+                '''
+            }
+        }
+
         stage('Deploy with Ansible') {
             steps {
                 script {
                     sh '''
-                    ansible-playbook -i hosts_inventory.ini deploy.yml
+                    ansible-playbook -i inventory.ini roles/app_server/tasks/deploy.yml
                     '''
                 }
             }

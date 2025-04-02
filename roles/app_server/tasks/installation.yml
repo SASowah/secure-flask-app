@@ -16,7 +16,7 @@
   when: ansible_distribution == "Ubuntu"
 
 - name: Install required packages (RHEL/CentOS)
-  become: yes
+  become: yes # This enables privilege escalation
   yum:
     name: "{{ item }}"
     state: present
@@ -35,7 +35,7 @@
     creates: /opt/myapp/venv
 
 - name: Install Flask and Gunicorn using python3-pip
-  become: yes
+  become: yes # This enables privilege escalation
   pip:
     name:
       - Flask

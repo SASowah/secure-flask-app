@@ -1,6 +1,6 @@
 ---
 - name: Configure Jenkins Agent Server
   hosts: jenkins_agent
-  become: yes
+  become: yes # This enables privilege escalation
   roles:
     - jenkins_agent
