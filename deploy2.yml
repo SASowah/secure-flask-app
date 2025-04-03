@@ -1,4 +1,5 @@
 ---
+
 - name: Ensure app directory exists
   file:
     path: "{{ app_dir }}"
@@ -9,7 +10,7 @@
 
 - name: Copy application files
   copy:
-    src: "{{ playbook_dir }}/src/{{ item }}"
+    src: "{{ playbook_dir }}/../../src/{{ item }}"
     dest: "{{ app_dir }}"
     owner: "{{ app_user }}"
     group: "{{ app_group }}"
