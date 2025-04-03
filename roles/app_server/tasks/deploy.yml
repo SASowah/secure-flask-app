@@ -15,9 +15,9 @@
     group: "{{ app_group }}"
     mode: '0644'
   loop:
-      - app.py
-      - init.db.js
-      - requirements.txt
+    - app.py
+    - init.db.js
+    - requirements.txt
 
 - name: Install Python dependencies
   pip:
@@ -27,6 +27,6 @@
 
 - name: Deploy systemd service for Flask
   template:
-      src: flask_app.service.j2
-      dest: /etc/systemd/system/flask_app.service
+    src: flask_app.service.j2
+    dest: /etc/systemd/system/flask_app.service
   notify: Restart Flask App

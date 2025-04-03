@@ -65,7 +65,7 @@ pipeline {
             steps {
                 script {
                     sh '''
-                    ansible-playbook -i hosts_inventory.ini roles/app_server/tasks/deploy.yml
+                    ansible-playbook -i hostsinventory.ini roles/app_server/tasks/deploy.yml
                     '''
                 }
             }
