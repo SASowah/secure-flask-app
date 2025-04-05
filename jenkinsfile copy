@@ -1,0 +1,75 @@
+pipeline {
+    agent { label 'jenkins-agent' }
+
+    environment {
+        ANSIBLE_PLAYBOOK = 'deploy2.yml'  // Path to deployment playbook
+        INVENTORY_FILE = 'hosts_inventory1.ini'  // Update with your Ansible inventory file
+        ARTIFACT_NAME = "secure-flask-app.tar.gz"
+        HASH_FILE = "hash.txt"
+    }
+
+    stages {
+        stage('Checkout Code') {
+            steps {
+                script {
+                    git branch: "dev",
+                        url: 'https://github.com/SASowah/secure-flask-app.git'
+                }
+            }
+        }
+
+        stage('Install Dependencies') {
+            steps {
+                script {
+                    // Check if the requirements.txt file exists
+                    sh 'ls -l src/requirements.txt'
+                    sh 'pip3 install -r src/requirements.txt'
+                }
+            }
+        }
+
+        stage('Archive Application') {
+            steps {
+                sh 'tar -czf secure-flask-app.tar.gz src/'
+                sh 'sha256sum $ARTIFACT_NAME | awk \'{print $1}\' > $HASH_FILE'
+                archiveArtifacts artifacts: 'secure-flask-app.tar.gz, hash.txt', fingerprint: true
+            }
+        }
+
+        stage('Verify Artifact Integrity') {
+            steps {
+                sh '''
+                    CALCULATED_HASH=$(sha256sum $ARTIFACT_NAME | awk '{print $1}')
+                    EXPECTED_HASH=$(cat $HASH_FILE)
+
+                    if [ "$CALCULATED_HASH" != "$EXPECTED_HASH" ]; then
+                        echo "❌ Artifact integrity verification failed!"
+                        exit 1
+                    else
+                        echo "✅ Artifact integrity verified!"
+                    fi
+                '''
+            }
+        }
+
+        stage('Deploy with Ansible') {
+            steps {
+                sshagent (credentials: ['app-server']) {
+                    sh '''
+                        echo "Starting Ansible deployment..."
+                        ansible-playbook -i hosts_inventory.ini deploy2.yml || {
+                            echo "❌ Ansible deployment failed!"
+                            exit 1
+                        }
+                    '''
+                }
+            }
+        }
+    }
+
+    post {
+        failure {
+            echo '❌ Build Failed! Check logs for issues.'
+        }
+    }
+}
