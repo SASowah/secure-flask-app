@@ -31,8 +31,8 @@
 
 - name: create a virtual environment
   command:
-    cmd: "python3 -m venv /opt/myapp/venv"
-    creates: /opt/myapp/venv
+    cmd: "python3 -m venv {{ app_dir }}/venv"
+    creates: "{{ app_dir }}/venv"
 
 - name: Install Flask and Gunicorn using python3-pip
   become: yes # This enables privilege escalation
@@ -40,6 +40,6 @@
     name:
       - Flask
       - gunicorn
-    virtualenv: /opt/myapp/venv
+    virtualenv: "{{ app_dir }}/venv"
   when: ansible_distribution in ["Ubuntu","CentOS"]
 
