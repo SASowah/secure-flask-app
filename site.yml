@@ -7,12 +7,19 @@
     app_group: ubuntu
     app_dir: /opt/flask_app
     playbook_dir: "/home/ec2-user/secure-flask-app"
-    template_dir: "/opt/flask_app/"
 
   tasks:
     - name: Ensure app directory exists
       file:
         path: "{{ app_dir }}"
+        state: directory
+        owner: "{{ app_user }}"
+        group: "{{ app_group }}"
+        mode: "0755"
+
+    - name: Ensure templates directory exists
+      file:
+        path: "{{ app_dir }}/templates"
         state: directory
         owner: "{{ app_user }}"
         group: "{{ app_group }}"
@@ -32,21 +39,20 @@
 
     - name: Copy Flask app templates (including index.html)
       copy:
-        src: "{{ playbook_dir }}/src/{{ item }}"
-        dest: "{{ app_dir }}/templates/{{ item }}"  # Corrected destination path for templates
+        src: "roles/app_server/templates/{{ item }}"  # Relative path from your playbook
+        dest: "{{ app_dir }}/templates/{{ item }}"   # Destination on the remote server
         owner: "{{ app_user }}"
         group: "{{ app_group }}"
         mode: "0644"
       loop:
         - index.html
-      remote_src: yes  # This tells Ansible that the source file is already on the remote server
-      
+
     - name: Install Python dependencies
       pip:
         requirements: "{{ app_dir }}/requirements.txt"
         virtualenv: /opt/myapp/venv
-    - name: Deploy systemd service for Flask
 
+    - name: Deploy systemd service for Flask
       template:
         src: flask_app.service.j2
         dest: /etc/systemd/system/flask_app.service
