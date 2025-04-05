@@ -2,6 +2,7 @@
 - name: Deploy Flask application
   hosts: app_server
   become: yes
+  
   tasks:
     - name: Ensure app directory exists
       file:
