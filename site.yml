@@ -7,6 +7,7 @@
     app_group: ubuntu
     app_dir: /opt/flask_app
     playbook_dir: "/home/ec2-user/secure-flask-app"
+    template_dir: "/opt/flask_app/roles/app_server/templates"
 
   tasks:
     - name: Ensure app directory exists
@@ -27,6 +28,15 @@
         - app.py
         - init.db.js
         - requirements.txt
+    - name: Copy Flask app templates (including index.html)
+      copy:
+        src: "{{ playbook_dir }}/roles/app_server/templates/{{ item }}"
+        dest: "{{ template_dir }}/{{ item }}"
+        owner: "{{ app_user }}"
+        group: "{{ app_group }}"
+        mode: "0644"
+      loop:
+        - index.html
     - name: Install Python dependencies
       pip:
         requirements: "{{ app_dir }}/requirements.txt"
