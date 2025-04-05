@@ -1,7 +1,38 @@
 ---
-#run app_server
-- name: Configure App Server
+- name: Deploy Flask application
   hosts: app_server
-  become: yes # This enables privilege escalation
-  roles:
-    - app_server
+  become: yes
+  vars:
+    app_user: ubuntu
+    app_group: ubuntu
+    app_dir: /opt/flask_app
+    playbook_dir: "/home/ec2-user/secure-flask-app"
+
+  tasks:
+    - name: Ensure app directory exists
+      file:
+        path: "{{ app_dir }}"
+        state: directory
+        owner: "{{ app_user }}"
+        group: "{{ app_group }}"
+        mode: "0755"
+    - name: Copy application files
+      copy:
+        src: "{{ playbook_dir }}/src/{{ item }}"
+        dest: "{{ app_dir }}"
+        owner: "{{ app_user }}"
+        group: "{{ app_group }}"
+        mode: "0644"
+      loop:
+        - app.py
+        - init.db.js
+        - requirements.txt
+    - name: Install Python dependencies
+      pip:
+        requirements: "{{ app_dir }}/requirements.txt"
+        virtualenv: /opt/myapp/venv
+    - name: Deploy systemd service for Flask
+      template:
+        src: flask_app.service.j2
+        dest: /etc/systemd/system/flask_app.service
+        notify: Restart Flask App
