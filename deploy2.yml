@@ -2,10 +2,11 @@
 - name: Deploy Flask application
   hosts: app_server
   become: yes
-  app_user: ubuntu
-  app_group: ubuntu
-  app_dir: /opt/flask_app
-  playbook_dir: "/home/ec2-user/secure-flask-app"
+  vars:
+    app_user: ubuntu
+    app_group: ubuntu
+    app_dir: /opt/flask_app
+    playbook_dir: "/home/ec2-user/secure-flask-app"
 
   tasks:
     - name: Ensure app directory exists
