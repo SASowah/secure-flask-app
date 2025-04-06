@@ -3,14 +3,14 @@
 
 - name: Test Nginx configuration
   command: nginx -t
-   become: yes
-   failed_when: "'test is successful' not in result.stdout"
+  become: yes
+  failed_when: "'test is successful' not in result.stdout"
 
 - name: Restart Nginx to apply changes
   systemd:
     name: nginx
     state: restarted
-    become: yes
+  become: yes
     daemon_reload: yes
 
 - name: Restart Gunicorn
