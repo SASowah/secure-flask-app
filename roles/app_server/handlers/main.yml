@@ -1,11 +1,5 @@
 ---
 # handlers file for roles/app_server
-- name: Copy Nginx configuration
-      template:
-        src: nginx.conf.j2
-        dest: /etc/nginx/nginx.conf
-      notify: Restart Nginx
-      become: yes
 
 - name: Test Nginx configuration
   command: nginx -t

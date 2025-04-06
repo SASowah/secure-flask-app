@@ -1,9 +1,4 @@
  # Change to specific groups like 'app-server' or 'jenkins-master' if needed
-    - name: Check Java Version
-      command: java -version
-      register: java_version
-      ignore_errors: yes
-
     - name: Check Nginx Status
       command: nginx -t
       register: nginx_status
@@ -33,7 +28,6 @@
     - name: Print Results
       debug:
         msg:
-          - "Java Version: {{ java_version.stdout | default('Not Installed') }}"
           - "Nginx Status: {{ nginx_status.stdout | default('Error') }}"
           - "Certbot Version: {{ certbot_version.stdout | default('Not Installed') }}"
           - "Ansible Version: {{ ansible_version.stdout | default('Not Available') }}"

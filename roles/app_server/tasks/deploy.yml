@@ -25,12 +25,14 @@
         requirements: "{{ app_dir }}/requirements.txt"
         virtualenv: "{{ app_dir }}/venv"
 
-    - name: Generate SSL Certificates with Certbot
+    - name: Obtain SSL certificate with Certbot for {{ domain }}
       command: >
-        certbot certonly --standalone -d secureflask.duckdns.org
-      register: certbot_output
-      ignore_errors: yes
-      failed_when: "'certbot' not in certbot_output.stderr"
+        certbot --nginx --non-interactive --agree-tos --redirect
+        --email {{ certbot_email }}
+        -d {{ domain }} -d www.{{ domain }}
+      when: not cert.stat.exists
+      register: certbot_result
+      changed_when: "'Congratulations' in certbot_result.stdout"
 
 
     - name: Deploy systemd service for Flask

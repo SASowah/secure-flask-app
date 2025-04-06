@@ -1,0 +1,6 @@
+---
+- name: Deploy Flask application
+  hosts: app-server
+  become: yes
+  roles:
+    -app_server

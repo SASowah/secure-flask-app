@@ -24,3 +24,55 @@
       state: started
       enabled: yes    
   
+# Detect shell path: mongosh is the new default
+- name: Check for mongosh
+  stat:
+    path: /usr/bin/mongosh
+  register: mongosh_check
+
+- name: Fail if mongosh is missing
+  fail:
+    msg: "mongosh shell not found! MongoDB shell required to seed the database."
+  when: not mongosh_check.stat.exists
+
+- name: Seed MongoDB with sample messages
+  copy:
+    dest: /tmp/seed.js
+    content: |
+      use securedb;
+      if (db.messages.countDocuments() === 0) {
+        db.messages.insertMany([
+          { text: "Hello Team39!" },
+          { text: "Your app is secured and verified." },
+          { text: "Deployed using Ansible + Jenkins + Flask!" }
+        ]);
+      }
+
+- name: Run seed script using mongosh
+  shell: /usr/bin/mongosh /tmp/seed.js
+
+- name: Remove seed script
+  file:
+    path: /tmp/seed.js
+    state: absent
+
+- name: Ping MongoDB
+  command: /usr/bin/mongosh --eval "db.adminCommand('ping')"
+  register: mongodb_ping
+  changed_when: false
+  failed_when: mongodb_ping.rc != 0
+
+- name: Check seeded messages count
+  command: /usr/bin/mongosh --eval "use securedb; db.messages.countDocuments()"
+  register: mongodb_messages
+  changed_when: false
+  failed_when: mongodb_messages.rc != 0
+
+- name: Show seeded message count
+  debug:
+    var: mongodb_messages.stdout_lines
+
+- name: View MongoDB log tail
+  command: tail -n 10 /var/log/mongodb/mongod.log
+  register: mongodb_logs
+  changed_when: false
