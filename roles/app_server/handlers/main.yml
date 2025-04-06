@@ -11,7 +11,7 @@
     name: nginx
     state: restarted
   become: yes
-    daemon_reload: yes
+  daemon_reload: yes
 
 - name: Restart Gunicorn
   systemd:
