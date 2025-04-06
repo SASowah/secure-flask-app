@@ -61,8 +61,7 @@
         name: nginx
         state: restarted
       become: yes
-      
-    handlers:
+
     - name: Restart Gunicorn
       systemd:
         name: gunicorn
