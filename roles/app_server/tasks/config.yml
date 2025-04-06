@@ -11,48 +11,16 @@
     dest: /etc/nginx/nginx.conf
   notify: Restart Nginx
 
-# New: Certbot SSL Configuration
-- name: Create SSL directories
-  file:
-    path: "{{ item }}"
-    state: directory
-    mode: 0755
-  with_items:
-    - /etc/ssl/private
-    - /etc/ssl/certs
+- name: Install Certbot
+  package:
+    name: certbot
+    state: present
   become: yes
 
-- name: Generate private key
-  openssl_privatekey:
-    path: /etc/ssl/private/selfsigned.key
-    size: 2048
-    mode: 0600
-  become: yes # This enables privilege escalation
-
-- name: Generate a CSR (Certificate Signing Request)
-  openssl_csr:
-    path: /etc/ssl/private/selfsigned.csr
-    privatekey_path: /etc/ssl/private/selfsigned.key
-    common_name: "{{ ansible_default_ipv4.address }}"
-  become: yes # This enables privilege escalation
-
-- name: Generate self-signed certificate
-  openssl_certificate:
-    path: /etc/ssl/certs/selfsigned.crt
-    privatekey_path: /etc/ssl/private/selfsigned.key
-    csr_path: /etc/ssl/private/selfsigned.csr
-    provider: selfsigned
-    selfsigned_not_after: "+365d"
-  become: yes # This enables privilege escalation
-
-- name: Set up periodic certificate regeneration
-  cron:
-    name: "Regenerate Self-Signed Certificate"
-    job: "openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/private/selfsigned.key -out /etc/ssl/certs/selfsigned.crt -subj '/CN={{ ansible_default_ipv4.address }}'"
-    state: present
-    special_time: monthly
-  become: yes # This enables privilege escalation
-
+- name: Obtain SSL certificates using Certbot
+  command: certbot certonly --standalone -d secureflask.duckdns.org
+  become: yes
+  notify: Restart Nginx
 
 - name: Ensure MongoDB config file exists
   stat:

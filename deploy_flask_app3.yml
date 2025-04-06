@@ -61,3 +61,19 @@
         name: nginx
         state: restarted
       become: yes
+      
+    handlers:
+    - name: Restart Gunicorn
+      systemd:
+        name: gunicorn
+        state: restarted
+
+    - name: Restart Nginx
+      systemd:
+        name: nginx
+        state: restarted
+
+    - name: restart mongodb
+      systemd:
+        name: mongod
+        state: restarted

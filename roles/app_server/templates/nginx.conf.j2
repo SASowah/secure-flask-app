@@ -9,8 +9,7 @@ http {
     # Redirect HTTP to HTTPS
     server {
         listen 80;
-        server_name 13.48.5.13;  # Replace with your IP address
-
+        server_name secureflask.duckdns.org;  
         # Redirect all traffic to HTTPS
         return 301 https://$host$request_uri;
     }
@@ -21,8 +20,8 @@ http {
         server_name 13.48.5.13;  # Replace with your IP address
 
         # SSL certificate files from Certbot
-        ssl_certificate /etc/letsencrypt/live/13.48.5.13/fullchain.pem;  # Use your IP address here
-        ssl_certificate_key /etc/letsencrypt/live/13.48.5.13/privkey.pem;  # Use your IP address here
+        ssl_certificate /etc/letsencrypt/live/secureflask.duckdns.org;/fullchain.pem;  # Use your IP address here
+        ssl_certificate_key /etc/letsencrypt/live/secureflask.duckdns.org;/privkey.pem;  # Use your IP address here
 
         # Proxy settings for forwarding requests to Flask app
         location / {
