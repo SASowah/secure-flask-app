@@ -1,15 +1,27 @@
 ---
 # handlers file for roles/app_server
+- name: Copy Nginx configuration
+      template:
+        src: nginx.conf.j2
+        dest: /etc/nginx/nginx.conf
+      notify: Restart Nginx
+      become: yes
+
+- name: Test Nginx configuration
+  command: nginx -t
+   become: yes
+   failed_when: "'test is successful' not in result.stdout"
+
+- name: Restart Nginx to apply changes
+  systemd:
+    name: nginx
+    state: restarted
+    become: yes
+    daemon_reload: yes
+
 - name: Restart Gunicorn
   systemd:
     name: gunicorn
-    state: restarted
-    enabled: yes
-    daemon_reload: yes
-
-- name: Restart Nginx
-  systemd:
-    name: nginx
     state: restarted
     enabled: yes
     daemon_reload: yes

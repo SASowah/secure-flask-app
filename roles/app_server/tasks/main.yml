@@ -5,5 +5,4 @@
 - import_tasks: config.yml
 - import_tasks: mongodb.yml
 - import_tasks: verify_dependencies.yml
-- import_tasks: deploy_flask_app4.yml
 ...

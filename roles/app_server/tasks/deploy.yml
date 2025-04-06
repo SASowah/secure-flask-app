@@ -1,32 +1,41 @@
 ---
-- name: Ensure app directory exists
-  file:
-    path: "{{ app_dir }}"
-    state: directory
-    owner: "{{ app_user }}"
-    group: "{{ app_group }}"
-    mode: '0755'
+    # Existing app deployment tasks
+    - name: Ensure app directory exists
+      file:
+        path: "{{ app_dir }}"
+        state: directory
+        owner: "{{ app_user }}"
+        group: "{{ app_group }}"
+        mode: "0755"
 
-- name: Copy application files
-  copy:
-    src: "{{ playbook_dir }}/src/{{ item }}"
-    dest: "{{ app_dir }}"
-    owner: "{{ app_user }}"
-    group: "{{ app_group }}"
-    mode: '0644'
-  loop:
-    - app.py
-    - init.db.js
-    - requirements.txt
+    - name: Copy application files
+      copy:
+        src: "{{ playbook_dir }}/src/{{ item }}"
+        dest: "{{ app_dir }}"
+        owner: "{{ app_user }}"
+        group: "{{ app_group }}"
+        mode: "0644"
+      loop:
+        - app.py
+        - init.db.js
+        - requirements.txt
 
-- name: Install Python dependencies
-  pip:
-    requirements: "{{ app_dir }}/requirements.txt"
-    virtualenv: "{{ app_dir }}/venv"
+    - name: Install Python dependencies
+      pip:
+        requirements: "{{ app_dir }}/requirements.txt"
+        virtualenv: "{{ app_dir }}/venv"
+
+    - name: Generate SSL Certificates with Certbot
+      command: >
+        certbot certonly --standalone -d secureflask.duckdns.org
+      register: certbot_output
+      ignore_errors: yes
+      failed_when: "'certbot' not in certbot_output.stderr"
 
 
-- name: Deploy systemd service for Flask
-  template:
-    src: flask_app.service.j2
-    dest: /etc/systemd/system/flask_app.service
-  notify: Restart Flask App
+    - name: Deploy systemd service for Flask
+      template:
+      src: flask_app.service.j2
+      dest: /etc/systemd/system/flask_app.service
+      notify: Restart Flask App
+...
