@@ -37,6 +37,24 @@
     state: enabled
     policy: allow
 
+- name: Remove old certificates for IP address (if they exist)
+  file:
+    path: "/etc/letsencrypt/live/13.48.5.13"
+    state: absent
+  ignore_errors: true  # Ignore errors in case the certificates don't exist
+
+- name: Remove old certificates archive for IP address (if they exist)
+  file:
+    path: "/etc/letsencrypt/archive/13.48.5.13"
+    state: absent
+  ignore_errors: true  # Ignore errors if the directory does not exist
+
+- name: Remove old renewal config for IP address (if it exists)
+  file:
+    path: "/etc/letsencrypt/renewal/13.48.5.13.conf"
+    state: absent
+  ignore_errors: true  # Ignore errors if the file does not exist
+
 - name: Check if certificate already exists
   stat:
     path: /etc/letsencrypt/live/{{ domain }}/fullchain.pem
