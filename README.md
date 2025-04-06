@@ -36,26 +36,31 @@ The project consists of three AWS EC2 instances:
 ## 📂 Project Structure
 ```bash
 secure-flask-app/
-│-- ansible/
-│   │-- roles/
-│   │   ├── nginx/
-│   │   ├── flask/
-│   │   ├── mongodb/
-│-- jenkins/
-│   │-- Jenkinsfile
-│-- src/
+│
+│-- roles/
+│   │-- app_server/
+│   │-- jenkins_agent/
+│   │
+│-- src/│   │
 │   │-- app.py
 │   │-- requirements.txt
 │   │-- init.db.js
 │   │-- templates/
 │   │   ├── index.html
+│   │
+│-- templates/
+│   │-- flask_app.service.j2
+│   │-- index.html
+│   │
+│-- jenkins/
+│   │-- Jenkinsfile
 │-- README.md
 ```
 
 ## 🛠️ Installation & Deployment
 ### 1️⃣ Clone the Repository
 ```bash
-git clone https://github.com/your-repo/secure-flask-app.git
+git clone https://github.com/SASowah/secure-flask-app.git
 cd secure-flask-app
 ```
 
@@ -88,6 +93,3 @@ ansible-playbook -i inventory ansible/deploy.yml
 - Implement Kubernetes for scalability
 
 ---
-📌 **Author:** Your Name  
-🔗 **GitHub:** [Your Repo](https://github.com/your-repo)  
-🚀 **Last Updated:** March 2025
