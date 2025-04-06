@@ -4,5 +4,6 @@
 - import_tasks: config.yml
 - import_tasks: mongodb.yml
 - import_tasks: verify_dependencies.yml
-- import_tasks: deploy.yml
+- import_tasks: temp1.yml
+
 ...
