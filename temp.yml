@@ -1,0 +1,50 @@
+---
+- name: Configure Nginx for Flask App
+  hosts: app-server
+  become: yes
+
+  vars:
+    domain: "secureflask.duckdns.org"  # Replace with your domain
+    certbot_email: "samsoo18@yahoo.com"  # Replace with your email for Certbot
+
+  tasks:
+    # Step 1: Remove the default Nginx site
+    - name: Remove default Nginx site
+      file:
+        path: /etc/nginx/sites-enabled/default
+        state: absent
+
+    # Step 2: Copy Nginx config from template
+    - name: Create Nginx config for {{ domain }}
+      template:
+        src: nginx.conf.j2
+        dest: /etc/nginx/sites-available/{{ domain }}
+
+    # Step 3: Enable Nginx site for {{ domain }}
+    - name: Enable Nginx site for {{ domain }}
+      file:
+        src: /etc/nginx/sites-available/{{ domain }}
+        dest: /etc/nginx/sites-enabled/{{ domain }}
+        state: link
+
+    # Step 4: Check if the certificate exists for the domain
+    - name: Check if certificate already exists
+      stat:
+        path: /etc/letsencrypt/live/{{ domain }}/fullchain.pem
+      register: cert
+
+    # Step 5: Obtain SSL certificate with Certbot if it doesn't exist
+    - name: Obtain SSL certificate with Certbot for {{ domain }}
+      command: >
+        certbot --nginx --non-interactive --agree-tos --redirect
+        --email {{ certbot_email }}
+        -d {{ domain }} -d www.{{ domain }}
+      when: not cert.stat.exists
+      register: certbot_result
+      changed_when: "'Congratulations' in certbot_result.stdout"
+
+    # Step 6: Restart Nginx to apply changes
+    - name: Restart Nginx
+      systemd:
+        name: nginx
+        state: restarted
