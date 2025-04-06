@@ -39,8 +39,7 @@
 
     - name: Generate SSL Certificates with Certbot
       command: >
-        certbot certonly --standalone -d 13.48.5.13
-      become: yes
+        certbot certonly --standalone -d secureflask.duckdns.org
       register: certbot_output
       ignore_errors: yes
       failed_when: "'certbot' not in certbot_output.stderr"
