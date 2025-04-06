@@ -35,18 +35,11 @@
     msg: "mongosh shell not found! MongoDB shell required to seed the database."
   when: not mongosh_check.stat.exists
 
-- name: Seed MongoDB with sample messages
+- name: Copy MongoDB seed script from local src folder to app server
   copy:
+    src: src/init.db.js
     dest: /tmp/seed.js
-    content: |
-      use securedb;
-      if (db.messages.countDocuments() === 0) {
-        db.messages.insertMany([
-          { text: "Hello Team39!" },
-          { text: "Your app is secured and verified." },
-          { text: "Deployed using Ansible + Jenkins + Flask!" }
-        ]);
-      }
+    mode: '0644'
 
 - name: Run seed script using mongosh
   shell: /usr/bin/mongosh /tmp/seed.js
@@ -76,11 +69,6 @@
 - name: Show seeded message count
   debug:
     var: mongodb_messages.stdout_lines
-
-- name: View MongoDB log tail
-  command: tail -n 10 /var/log/mongodb/mongod.log
-  register: mongodb_logs
-  changed_when: false
 
 - name: Debug seed script output
   debug:
