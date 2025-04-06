@@ -10,8 +10,8 @@
   systemd:
     name: nginx
     state: restarted
+    daemon_reload: yes
   become: yes
-  daemon_reload: yes
 
 - name: Restart Gunicorn
   systemd:
