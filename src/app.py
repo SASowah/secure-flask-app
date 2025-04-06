@@ -10,7 +10,8 @@ collection = db.messages
 
 @app.route("/")
 def index():
-    messages = collection.find()
+    # Convert the cursor to a list
+    messages = list(collection.find())
     return render_template("index.html", messages=messages)
 
 if __name__ == "__main__":
