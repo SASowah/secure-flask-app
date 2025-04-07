@@ -11,6 +11,8 @@ pipeline {
         EMAIL_RECIPIENTS = "samsoo18@yahoo.com"
         TEST_SERVER_URL = "https://secureflask.duckdns.org"
         APP_SERVER_IP = '13.48.26.31'
+        APP_SERVER_USER = 'ubuntu'
+        APP_SERVER_HOST = 'app-server'
     }
 
     stages {
@@ -89,13 +91,24 @@ stage('Update DuckDNS IP') {
     }
 }
 
-        stage('Test Deployment') {
-            steps {
-                script {
-                    sh "curl -f ${TEST_SERVER_URL}"
-                }
-            }
+stage('Test Deployment') {
+    steps {
+        script {
+            sh """
+            ssh ${APP_SERVER_USER}@${APP_SERVER_HOST} '
+                for i in {1..5}; do
+                    if curl -sfk ${TEST_SERVER_URL}; then
+                        exit 0
+                    fi
+                    sleep 10
+                done
+                echo "❌ App did not become reachable after 5 attempts"
+                exit 1
+            '
+            """
         }
+    }
+}
 
         stage('Cleanup and Rollback (If Necessary)') {
             when {
