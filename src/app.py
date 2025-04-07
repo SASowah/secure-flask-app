@@ -1,3 +1,7 @@
+"""
+Flask application to serve a secure DevOps app with MongoDB integration.
+"""
+
 from flask import Flask, render_template
 from pymongo import MongoClient
 
@@ -8,6 +12,7 @@ collection = db.messages
 
 @app.route("/")
 def index():
+    """Render the homepage with messages from MongoDB."""
     messages = collection.find()
     return render_template("index.html", messages=messages)
 
