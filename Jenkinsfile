@@ -78,15 +78,20 @@ pipeline {
             }
         }
 
-        stage('Update DuckDNS IP') {
-            steps {
-                script {
-                    def ec2_ip = sh(script: "curl http://checkip.amazonaws.com", returnStdout: true).trim()
-                    def update_url = "https://www.duckdns.org/update?domains=${DUCKDNS_DOMAIN}&token=${DUCKDNS_TOKEN}&ip=${ec2_ip}"
-                    sh "curl -k ${update_url}" 
-                }
-            }
+stage('Update DuckDNS IP') {
+    steps {
+        script {
+            // Fetch current public IP from ipify API
+            def ip = sh(script: 'curl -s https://api.ipify.org', returnStdout: true).trim()
+            echo "Current public IP: ${ip}"
+
+            // Call DuckDNS API to update the IP
+            sh """
+            curl -k "https://www.duckdns.org/update?domains=${DUCKDNS_DOMAIN}&token=${DUCKDNS_TOKEN}&ip=${ip}"
+            """
         }
+    }
+}
 
         stage('Test Deployment') {
             steps {
