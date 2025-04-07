@@ -1,13 +1,13 @@
-import os
-from flask import Flask, render_template
-from pymongo import MongoClient
-
 # Module-level docstring
 """
 This is the main module of the Flask application. It connects to a local MongoDB
 instance, retrieves messages from the 'securedb' database, and displays them
 on the homepage.
 """
+import os
+from flask import Flask, render_template
+from pymongo import MongoClient
+
 
 template_dir = os.path.abspath('roles/app_server/templates')  # update path if needed
 app = Flask(__name__)
