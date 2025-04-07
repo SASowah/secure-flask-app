@@ -10,6 +10,7 @@ pipeline {
         DUCKDNS_DOMAIN = 'secureflask.duckdns.org'
         EMAIL_RECIPIENTS = "samsoo18@yahoo.com"
         TEST_SERVER_URL = "https://secureflask.duckdns.org"
+        APP_SERVER_IP = '13.48.26.31'
     }
 
     stages {
@@ -81,13 +82,8 @@ pipeline {
 stage('Update DuckDNS IP') {
     steps {
         script {
-            // Fetch current public IP from ipify API
-            def ip = sh(script: 'curl -s https://api.ipify.org', returnStdout: true).trim()
-            echo "Current public IP: ${ip}"
-
-            // Call DuckDNS API to update the IP
             sh """
-            curl -k "https://www.duckdns.org/update?domains=${DUCKDNS_DOMAIN}&token=${DUCKDNS_TOKEN}&ip=${ip}"
+            curl -k "https://www.duckdns.org/update?domains=${DUCKDNS_DOMAIN}&token=${DUCKDNS_TOKEN}&ip=${APP_SERVER_IP}"
             """
         }
     }
