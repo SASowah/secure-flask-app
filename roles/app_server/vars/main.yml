@@ -3,6 +3,7 @@
 app_user: ubuntu
 app_group: ubuntu
 app_dir: /opt/flask_app
+mongodb_database: securedb
 domain: secureflask.duckdns.org
 certbot_email: samsoo18@yahoo.com
 playbook_dir: "/home/ec2-user/secure-flask-app"

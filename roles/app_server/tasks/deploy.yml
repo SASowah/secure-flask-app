@@ -1,4 +1,11 @@
 ---
+    # Delete old files to prevent stale content
+    - name: Remove previous app directory
+      file:
+        path: "{{ app_dir }}"
+        state: absent
+      ignore_errors: yes  # Allow first-time runs
+
     # Existing app deployment tasks
     - name: Ensure app directory exists
       file:
@@ -6,7 +13,7 @@
         state: directory
         owner: "{{ app_user }}"
         group: "{{ app_group }}"
-        mode: "0755"
+        mode: '0755'
 
     - name: Copy application files
       copy:
@@ -14,17 +21,65 @@
         dest: "{{ app_dir }}"
         owner: "{{ app_user }}"
         group: "{{ app_group }}"
-        mode: "0644"
+        mode: '0644'
       loop:
         - app.py
         - init.db.js
         - requirements.txt
+        - index.html
+    - name: Template MongoDB seed script (dynamic)
+      template:
+        src: init.db.js.j2
+        dest: "{{ app_dir }}/init.db.js"  # Rendered file path
+        owner: "{{ app_user }}"
+        group: "{{ app_group }}"
+        mode: '0644'
 
     - name: Install Python dependencies
       pip:
         requirements: "{{ app_dir }}/requirements.txt"
         virtualenv: "{{ app_dir }}/venv"
 
+    # Wait for MongoDB to be ready
+    - name: Wait for MongoDB to start
+      wait_for:
+        port: 27017
+        delay: 5
+        timeout: 30
+
+    # Execute MongoDB seed script
+    - name: Seed MongoDB data
+      command: /usr/bin/mongosh --file "{{ app_dir }}/init.db.js"
+      register: seed_result
+      changed_when: "'insertedCount' in seed_result.stdout"
+      failed_when: seed_result.rc != 0
+        
+    # Step 1: Remove the default Nginx site
+    - name: Remove default Nginx site
+      file:
+        path: /etc/nginx/sites-enabled/default
+        state: absent
+
+    # Step 2: Copy Nginx config from template
+    - name: Create Nginx config for {{ domain }}
+      template:
+        src: nginx.conf.j2
+        dest: /etc/nginx/sites-available/{{ domain }}
+
+    # Step 3: Enable Nginx site for {{ domain }}
+    - name: Enable Nginx site for {{ domain }}
+      file:
+        src: /etc/nginx/sites-available/{{ domain }}
+        dest: /etc/nginx/sites-enabled/{{ domain }}
+        state: link
+
+    # Step 4: Check if the certificate exists for the domain
+    - name: Check if certificate already exists
+      stat:
+        path: /etc/letsencrypt/live/{{ domain }}/fullchain.pem
+      register: cert
+
+    # Step 5: Obtain SSL certificate with Certbot if it doesn't exist
     - name: Obtain SSL certificate with Certbot for {{ domain }}
       command: >
         certbot --nginx --non-interactive --agree-tos --redirect
@@ -34,10 +89,14 @@
       register: certbot_result
       changed_when: "'Congratulations' in certbot_result.stdout"
 
-
+    # Step 6: Restart Nginx to apply changes
+    - name: Restart Nginx
+      systemd:
+        name: nginx
+        state: restarted
+        
     - name: Deploy systemd service for Flask
       template:
         src: flask_app.service.j2
         dest: /etc/systemd/system/flask_app.service
-      notify: Restart Flask App
-...
+        notify: Restart Flask App
