@@ -16,6 +16,7 @@
     - python3-venv
     - nginx
     - certbot
+    - gunicorn
     - python3-certbot-nginx
   when: ansible_distribution == "Ubuntu"
 
@@ -30,6 +31,7 @@
     - python3-virtualenv
     - nginx
     - certbot
+    - gunicorn
     - python3-certbot-nginx
   when: ansible_distribution == "CentOS"
 
