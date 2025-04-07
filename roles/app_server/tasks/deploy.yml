@@ -29,7 +29,7 @@
 
     - name: Template MongoDB seed script (dynamic)
       copy:
-        src: init.db.js
+        src: src/init.db.js
         dest: "{{ app_dir }}/init.db.js"  # Rendered file path
         owner: "{{ app_user }}"
         group: "{{ app_group }}"
