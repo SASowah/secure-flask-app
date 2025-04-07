@@ -39,6 +39,8 @@
       pip:
         requirements: "{{ app_dir }}/requirements.txt"
         virtualenv: "{{ app_dir }}/venv"
+        virtualenv_command: python3 -m venv  # Use Python's built-in venv
+      become: yes
 
     # Wait for MongoDB to be ready
     - name: Wait for MongoDB to start
