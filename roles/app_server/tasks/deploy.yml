@@ -4,10 +4,10 @@
       file:
         path: "{{ app_dir }}"
         state: absent
-      ignore_errors: yes  # Allow first-time runs
+      ignore_errors: no  # Allow first-time runs
 
     # Existing app deployment tasks
-    - name: Ensure app directory exists
+    - name: Create app directory 
       file:
         path: "{{ app_dir }}"
         state: directory
@@ -17,8 +17,8 @@
 
     - name: Copy application files
       copy:
-        src: "{{ playbook_dir }}/src/{{ item }}"
-        dest: "{{ app_dir }}"
+        src: "{{ playbook_dir }}/{{ item }}"
+        dest: "{{ app_dir }}/{{ item }}"
         owner: "{{ app_user }}"
         group: "{{ app_group }}"
         mode: '0644'
@@ -26,14 +26,26 @@
         - app.py
         - requirements.txt
         - index.html
+    - name: Create templates directory
+      file:
+        path: "{{ app_dir }}/templates"
+        state: directory
+        mode: "0755"
 
-    - name: Template MongoDB seed script (dynamic)
+    - name: Copy index.html to templates
       copy:
-        src: src/init.db.js
-        dest: "{{ app_dir }}/init.db.js"  # Rendered file path
+        src: "{{ playbook_dir }}/index.html"  # Your local index.html
+        dest: "{{ app_dir }}/templates/index.html"
         owner: "{{ app_user }}"
         group: "{{ app_group }}"
-        mode: '0644'
+        mode: "0644"
+    - name: Seed MongoDB data (with retries)
+      command: /usr/bin/mongosh "{{ app_dir }}/init.db.js"
+      register: seed_result
+      retries: 3
+      delay: 10
+      until: seed_result.rc == 0
+      changed_when: false
 
     - name: Install Python dependencies
       pip:

@@ -9,8 +9,9 @@ from flask import Flask, render_template
 from pymongo import MongoClient
 
 
-template_dir = os.path.abspath('roles/app_server/templates')  # update path if needed
-app = Flask(__name__)
+# template_dir = os.path.abspath('roles/app_server/templates')  # update path if needed
+#app = Flask(__name__)
+app = Flask(__name__, template_folder='templates')  # <-- Add template_folder
 
 # Establishing connection to MongoDB
 client = MongoClient("mongodb://localhost:27017/")
