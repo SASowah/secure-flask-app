@@ -44,13 +44,15 @@
 
 - name: Copy MongoDB seed script
   copy:
-    src: "{{ playbook_dir }}/src/init.db.js"  # Correct source path
+    src: init.db.js # Correct source path
     dest: "{{ app_dir }}/init.db.js"          # Destination: /opt/flask_app/init.db.js
-    owner: "{{ app_user }}"
-    group: "{{ app_group }}"
-    mode: "0644"
-    
 
+- name: Ping MongoDB
+  command: /usr/bin/mongosh --eval "db.adminCommand('ping')"
+  register: mongodb_ping
+  changed_when: false
+  failed_when: mongodb_ping.rc != 0
+    
 - name: Execute seed script
   command: /usr/bin/mongosh < {{ app_dir }}/init.db.js
   register: seed_result
