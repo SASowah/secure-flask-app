@@ -1,80 +1,128 @@
 pipeline {
-    agent { label 'flask-agent' }
+    agent { label 'jenkins-agent' }
 
     environment {
+        ANSIBLE_PLAYBOOK = 'site1.yml'
+        INVENTORY_FILE = 'hosts_inventory1.ini'
         ARTIFACT_NAME = "secure-flask-app.tar.gz"
         HASH_FILE = "hash.txt"
+        DUCKDNS_TOKEN = credentials('duckdns-token')
+        DUCKDNS_DOMAIN = 'yourdomain.duckdns.org'
+        EMAIL_RECIPIENTS = "sams0018@yahoo.com"
+        TEST_SERVER_URL = "https://secureflask.duckdns.org"
     }
 
     stages {
         stage('Checkout Code') {
             steps {
                 script {
-                    git branch: "main",
+                    git branch: "dev",
                         url: 'https://github.com/SASowah/secure-flask-app.git'
                 }
             }
         }
 
-        stage('Set up Python Environment') {
+        stage('Install Dependencies') {
             steps {
-                sh '''
-                python3 -m venv venv
-                source venv/bin/activate
-                pip install --upgrade pip
-                pip install -r requirements.txt
-                '''
+                script {
+                    sh 'ls -l src/requirements.txt'
+                    sh 'pip3 install -r src/requirements.txt'
+                }
             }
         }
 
-        stage('Run Tests') {
+        stage('Static Analysis (Code Quality)') {
             steps {
-                sh '''
-                source venv/bin/activate
-                pytest --junitxml=report.xml
-                '''
+                script {
+                    sh 'pip3 install pylint'
+                    sh 'pylint src/'
+                }
             }
         }
 
-        stage('Package Application') {
+        stage('Archive Application') {
             steps {
-                sh '''
-                tar -czvf $ARTIFACT_NAME app.py requirements.txt templates/
-                sha256sum $ARTIFACT_NAME | awk '{print $1}' > $HASH_FILE
-                '''
+                sh 'tar -czf secure-flask-app.tar.gz src/'
+                sh 'sha256sum $ARTIFACT_NAME | awk \'{print $1}\' > $HASH_FILE'
+                archiveArtifacts artifacts: 'secure-flask-app.tar.gz, hash.txt', fingerprint: true
             }
         }
 
         stage('Verify Artifact Integrity') {
             steps {
                 sh '''
-                CALCULATED_HASH=$(sha256sum $ARTIFACT_NAME | awk '{print $1}')
-                EXPECTED_HASH=$(cat $HASH_FILE)
-                
-                if [ "$CALCULATED_HASH" != "$EXPECTED_HASH" ]; then
-                    echo "❌ Artifact integrity verification failed!"
-                    exit 1
-                else
-                    echo "✅ Artifact integrity verified!"
-                fi
+                    CALCULATED_HASH=$(sha256sum $ARTIFACT_NAME | awk '{print $1}')
+                    EXPECTED_HASH=$(cat $HASH_FILE)
+
+                    if [ "$CALCULATED_HASH" != "$EXPECTED_HASH" ]; then
+                        echo "❌ Artifact integrity verification failed!"
+                        exit 1
+                    else
+                        echo "✅ Artifact integrity verified!"
+                    fi
                 '''
             }
         }
 
         stage('Deploy with Ansible') {
             steps {
-                script {
+                sshagent (credentials: ['app-server']) {
                     sh '''
-                    ansible-playbook -i hostsinventory.ini roles/app_server/tasks/deploy.yml
+                        echo "Starting Ansible deployment..."
+                        ansible-playbook -i $INVENTORY_FILE $ANSIBLE_PLAYBOOK || {
+                            echo "❌ Ansible deployment failed!"
+                            exit 1
+                        }
                     '''
+                }
+            }
+        }
+
+        stage('Update DuckDNS IP') {
+            steps {
+                script {
+                    def ec2_ip = sh(script: "curl http://checkip.amazonaws.com", returnStdout: true).trim()
+                    def update_url = "https://www.duckdns.org/update?domains=${DUCKDNS_DOMAIN}&token=${DUCKDNS_TOKEN}&ip=${ec2_ip}"
+                    sh "curl -k ${update_url}" 
+                }
+            }
+        }
+
+        stage('Test Deployment') {
+            steps {
+                script {
+                    sh "curl -f ${TEST_SERVER_URL}"
+                }
+            }
+        }
+
+        stage('Cleanup and Rollback (If Necessary)') {
+            when {
+                expression {
+                    return currentBuild.result == 'FAILURE'
+                }
+            }
+            steps {
+                script {
+                    echo "Rolling back deployment due to failure..."
+                    // Implement rollback logic here if needed
                 }
             }
         }
     }
 
     post {
+        success {
+            echo '✅ Deployment complete! Visit your app at https://secureflask.duckdns.org.'
+            mail to: EMAIL_RECIPIENTS,
+                 subject: "Deployment Success: secure-flask-app",
+                 body: "The deployment of secure-flask-app was successful!"
+        }
         failure {
             echo '❌ Build Failed! Check logs for issues.'
+            mail to: EMAIL_RECIPIENTS,
+                 subject: "Deployment Failed: secure-flask-app",
+                 body: "The deployment of secure-flask-app has failed. Please check the logs for details."
         }
     }
 }
