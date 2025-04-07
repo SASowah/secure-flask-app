@@ -41,22 +41,6 @@
         group: "{{ app_group }}"
         mode: "0644"
 
-    - name: Copy MongoDB seed script
-      copy:
-        src: "{{ playbook_dir }}/src/init.db.js"  # Correct source path
-        dest: "{{ app_dir }}/init.db.js"          # Destination: /opt/flask_app/init.db.js
-        owner: "{{ app_user }}"
-        group: "{{ app_group }}"
-        mode: "0644"
-
-    - name: Seed MongoDB data (with retries)
-      command: /usr/bin/mongosh "{{ app_dir }}/init.db.js"
-      register: seed_result
-      retries: 3
-      delay: 10
-      until: seed_result.rc == 0
-      changed_when: false
-
     - name: Install Python dependencies
       pip:
         requirements: "{{ app_dir }}/requirements.txt"
