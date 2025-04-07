@@ -2,7 +2,7 @@ pipeline {
     agent { label 'jenkins-agent' }
 
     environment {
-        ANSIBLE_PLAYBOOK = 'site1.yml'
+        ANSIBLE_PLAYBOOK = 'app_server.yml'
         INVENTORY_FILE = 'hosts_inventory1.ini'
         ARTIFACT_NAME = "secure-flask-app.tar.gz"
         HASH_FILE = "hash.txt"
