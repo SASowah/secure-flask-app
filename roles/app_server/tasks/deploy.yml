@@ -35,11 +35,12 @@
 
     - name: Copy index.html to templates
       copy:
-        src: "{{ playbook_dir }}/index.html"  # Your local index.html
+        src: "{{ playbook_dir }}/src/index.html"  # Your local index.html
         dest: "{{ app_dir }}/templates/index.html"
         owner: "{{ app_user }}"
         group: "{{ app_group }}"
         mode: "0644"
+        
     - name: Seed MongoDB data (with retries)
       command: /usr/bin/mongosh "{{ app_dir }}/init.db.js"
       register: seed_result
