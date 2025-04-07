@@ -4,4 +4,4 @@
 - import_tasks: verify_dependencies.yml    # Check for critical tools
 - import_tasks: mongodb.yml                # Install/configure MongoDB
 - import_tasks: deploy.yml             # Deploy app files
-- import_tasks: config.yml                 # Configure Nginx/Certbot LAST (avoids port conflicts)
+- import_tasks: config.yml                 # Configure Nginx/Certbot LAST
