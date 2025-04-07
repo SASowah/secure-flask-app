@@ -7,7 +7,7 @@ pipeline {
         ARTIFACT_NAME = "secure-flask-app.tar.gz"
         HASH_FILE = "hash.txt"
         DUCKDNS_TOKEN = credentials('duckdns-token')
-        DUCKDNS_DOMAIN = 'yourdomain.duckdns.org'
+        DUCKDNS_DOMAIN = 'secureflask.duckdns.org'
         EMAIL_RECIPIENTS = "samsoo18@yahoo.com"
         TEST_SERVER_URL = "https://secureflask.duckdns.org"
     }
