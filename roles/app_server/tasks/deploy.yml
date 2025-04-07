@@ -17,7 +17,7 @@
 
     - name: Copy application files
       copy:
-        src: "{{ playbook_dir }}/sec/{{ item }}"
+        src: "{{ playbook_dir }}/src/{{ item }}"
         dest: "{{ app_dir }}/{{ item }}"
         owner: "{{ app_user }}"
         group: "{{ app_group }}"
