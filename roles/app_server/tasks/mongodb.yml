@@ -52,7 +52,7 @@
     
 
 - name: Execute seed script
-  command: /usr/bin/mongosh {{ app_dir }}/init.db.js
+  command: /usr/bin/mongosh < {{ app_dir }}/init.db.js
   register: seed_result
   retries: 3
   delay: 10
