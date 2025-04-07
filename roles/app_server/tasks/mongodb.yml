@@ -45,23 +45,18 @@
 - name: Copy MongoDB seed script
   copy:
     src: src/init.db.js # Correct source path
-    dest: "{{ app_dir }}/init.db.js"          # Destination: /opt/flask_app/init.db.js
+    dest: /opt/flask_app/init.db.js        # Destination: /opt/flask_app/init.db.js
+
+- name: Seed MongoDB with starter data
+  shell: mongosh < /opt/flask_app/init.db.js
+  register: seed_output
+  changed_when: "'Added message' in seed_output.stdout"
 
 - name: Ping MongoDB
   command: /usr/bin/mongosh --eval "db.adminCommand('ping')"
   register: mongodb_ping
   changed_when: false
   failed_when: mongodb_ping.rc != 0
-    
-- name: Execute seed script
-  command: /usr/bin/mongosh < {{ app_dir }}/init.db.js
-  register: seed_result
-  retries: 3
-  delay: 10
-  changed_when: "'Data inserted successfully' in seed_result.stdout"
-  failed_when: 
-    - seed_result.rc != 0
-    - "'Error inserting data' in seed_result.stdout"
 
 - name: Verify document count
   command: /usr/bin/mongosh securedb --eval "db.messages.countDocuments()"
