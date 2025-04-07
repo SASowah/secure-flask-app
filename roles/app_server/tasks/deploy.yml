@@ -17,7 +17,7 @@
 
     - name: Copy application files
       copy:
-        src: "{{ playbook_dir }}/{{ item }}"
+        src: "{{ playbook_dir }}/sec/{{ item }}"
         dest: "{{ app_dir }}/{{ item }}"
         owner: "{{ app_user }}"
         group: "{{ app_group }}"
@@ -26,6 +26,7 @@
         - app.py
         - requirements.txt
         - index.html
+
     - name: Create templates directory
       file:
         path: "{{ app_dir }}/templates"
