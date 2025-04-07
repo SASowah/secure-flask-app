@@ -1,6 +1,6 @@
 ---
 #run app_server
-- name: Configure App Server
+- name: Deploy flask app
   hosts: app_server
   become: yes # This enables privilege escalation
   roles:
