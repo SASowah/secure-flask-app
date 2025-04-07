@@ -26,9 +26,9 @@
         - app.py
         - requirements.txt
         - index.html
-        
+
     - name: Template MongoDB seed script (dynamic)
-      template:
+      copy:
         src: init.db.js
         dest: "{{ app_dir }}/init.db.js"  # Rendered file path
         owner: "{{ app_user }}"
