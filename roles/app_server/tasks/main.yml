@@ -3,5 +3,5 @@
 - import_tasks: installation.yml           # Install system packages (e.g., Python, Nginx)
 - import_tasks: verify_dependencies.yml    # Check for critical tools (curl, tar, etc.)
 - import_tasks: mongodb.yml                # Install/configure MongoDB
-- import_tasks: tempdeploy.yml             # Deploy app files
+- import_tasks: deploy.yml             # Deploy app files
 - import_tasks: config.yml                 # Configure Nginx/Certbot LAST (avoids port conflicts)
