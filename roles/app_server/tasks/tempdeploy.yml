@@ -1,5 +1,4 @@
 ---
----
     # Existing app deployment tasks
     - name: Ensure app directory exists
       file:
