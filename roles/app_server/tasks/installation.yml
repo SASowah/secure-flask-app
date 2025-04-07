@@ -45,6 +45,7 @@
   pip:
     name:
       - Flask
+      - gunicorn
     virtualenv: "{{ app_dir }}/venv"
   when: ansible_distribution in ["Ubuntu","CentOS"]
 
