@@ -1,5 +1,32 @@
 ---
-    # Step 1: Remove the default Nginx site
+---
+    # Existing app deployment tasks
+    - name: Ensure app directory exists
+      file:
+        path: "{{ app_dir }}"
+        state: directory
+        owner: "{{ app_user }}"
+        group: "{{ app_group }}"
+        mode: "0755"
+
+    - name: Copy application files
+      copy:
+        src: "{{ playbook_dir }}/src/{{ item }}"
+        dest: "{{ app_dir }}"
+        owner: "{{ app_user }}"
+        group: "{{ app_group }}"
+        mode: "0644"
+      loop:
+        - app.py
+        - init.db.js
+        - requirements.txt
+
+    - name: Install Python dependencies
+      pip:
+        requirements: "{{ app_dir }}/requirements.txt"
+        virtualenv: "{{ app_dir }}/venv"
+        
+# Step 1: Remove the default Nginx site
     - name: Remove default Nginx site
       file:
         path: /etc/nginx/sites-enabled/default
@@ -39,3 +66,8 @@
       systemd:
         name: nginx
         state: restarted
+    - name: Deploy systemd service for Flask
+      template:
+        src: flask_app.service.j2
+        dest: /etc/systemd/system/flask_app.service
+        notify: Restart Flask App
