@@ -49,7 +49,7 @@
     mode: "0644"
 
 - name: Execute seed script
-  command: /usr/bin/mongosh "{{ app_dir }}/init.db.js"
+  command: /usr/bin/mongosh {{ app_dir }}/init.db.js
   register: seed_result
   changed_when: "'Data inserted successfully' in seed_result.stdout"
   failed_when: 
