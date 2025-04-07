@@ -44,7 +44,7 @@
 
 - name: Copy MongoDB seed script
   copy:
-    src: init.db.js # Correct source path
+    src: src/init.db.js # Correct source path
     dest: "{{ app_dir }}/init.db.js"          # Destination: /opt/flask_app/init.db.js
 
 - name: Ping MongoDB
