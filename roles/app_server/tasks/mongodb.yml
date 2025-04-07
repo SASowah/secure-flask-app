@@ -45,10 +45,10 @@
 - name: Copy MongoDB seed script
   copy:
     src: src/init.db.js 
-    dest: /temp/init.db.js        # Destination: /opt/flask_app/init.db.js
+    dest: /opt/flask_app/init.db.js       
 
 - name: Seed MongoDB with starter data
-  shell: mongosh < /temp/init.db.js
+  shell: mongosh  /opt/flask_app/init.db.js
   register: seed_output
   changed_when: "'Added message' in seed_output.stdout"
 
