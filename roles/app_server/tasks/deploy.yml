@@ -47,20 +47,6 @@
         virtualenv: "{{ app_dir }}/venv"
         virtualenv_command: python3 -m venv  # Use Python's built-in venv
       become: yes
-
-    # Wait for MongoDB to be ready
-    - name: Wait for MongoDB to start
-      wait_for:
-        port: 27017
-        delay: 5
-        timeout: 30
-
-    # Execute MongoDB seed script
-    - name: Seed MongoDB data
-      command: /usr/bin/mongosh --file "{{ app_dir }}/init.db.js"
-      register: seed_result
-      changed_when: "'insertedCount' in seed_result.stdout"
-      failed_when: seed_result.rc != 0
         
     # Step 1: Remove the default Nginx site
     - name: Remove default Nginx site
