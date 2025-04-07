@@ -15,7 +15,9 @@
 
 - name: Install MongoDB
   apt:
-    name: mongodb-org
+    name: 
+      - mongodb-org
+      - mongodb-mongosh
     state: present
 
 - name: Start and enable MongoDB service
@@ -52,6 +54,8 @@
 - name: Execute seed script
   command: /usr/bin/mongosh {{ app_dir }}/init.db.js
   register: seed_result
+  retries: 3
+  delay: 10
   changed_when: "'Data inserted successfully' in seed_result.stdout"
   failed_when: 
     - seed_result.rc != 0
