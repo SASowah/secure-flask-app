@@ -33,8 +33,4 @@ def index():
 
 if __name__ == "__main__":
     # Starting the Flask application
-    """
-    Starts the Flask application on all available network interfaces
-    (0.0.0.0) and listens on port 5000.
-    """
     app.run(host="0.0.0.0", port=5000)
