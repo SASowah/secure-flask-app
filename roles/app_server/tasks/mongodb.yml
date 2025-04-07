@@ -47,6 +47,7 @@
     owner: "{{ app_user }}"
     group: "{{ app_group }}"
     mode: "0644"
+    
 
 - name: Execute seed script
   command: /usr/bin/mongosh {{ app_dir }}/init.db.js
