@@ -24,12 +24,12 @@
         mode: '0644'
       loop:
         - app.py
-        - init.db.js
         - requirements.txt
         - index.html
+        
     - name: Template MongoDB seed script (dynamic)
       template:
-        src: init.db.js.j2
+        src: init.db.js
         dest: "{{ app_dir }}/init.db.js"  # Rendered file path
         owner: "{{ app_user }}"
         group: "{{ app_group }}"
