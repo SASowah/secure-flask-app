@@ -48,7 +48,7 @@
     dest: /opt/flask_app/init.db.js       
 
 - name: Seed MongoDB with starter data
-  shell: mongosh  /opt/flask_app/init.db.js
+  shell: mongosh  < /opt/flask_app/init.db.js
   register: seed_output
   changed_when: "'Added message' in seed_output.stdout"
 
