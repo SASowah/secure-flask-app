@@ -95,7 +95,7 @@ stage('Test Deployment') {
     steps {
         script {
             sh """
-            ssh ${APP_SERVER_USER}@${APP_SERVER_HOST} '
+            ssh ${APP_SERVER_USER}@${APP_SERVER_IP} '
                 for i in {1..5}; do
                     if curl -sfk ${TEST_SERVER_URL}; then
                         exit 0
