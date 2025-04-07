@@ -42,12 +42,14 @@
 
 - name: Copy MongoDB seed script
   copy:
-    src: src/init.db.js
-    dest: /opt/flask_app/
-    mode: '0644'
+    src: "{{ playbook_dir }}/src/init.db.js"  # Correct source path
+    dest: "{{ app_dir }}/init.db.js"          # Destination: /opt/flask_app/init.db.js
+    owner: "{{ app_user }}"
+    group: "{{ app_group }}"
+    mode: "0644"
 
 - name: Execute seed script
-  command: /usr/bin/mongosh --file /opt/flask_app/
+  command: /usr/bin/mongosh "{{ app_dir }}/init.db.js"
   register: seed_result
   changed_when: "'Data inserted successfully' in seed_result.stdout"
   failed_when: 
