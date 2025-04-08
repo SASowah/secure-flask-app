@@ -1,16 +1,16 @@
 # secure-flask-app
 # Secure Flask App with HTTPS, MongoDB, and Artifact Hash Verification
 
-## 📌 Project Overview
+##  Project Overview
 This project demonstrates a secure DevOps pipeline to deploy a **Flask** web application with **MongoDB**, **Let's Encrypt SSL**, and **artifact hash verification** for integrity checks. The deployment is automated using **Jenkins**, **Ansible**, and **GitHub**.
 
-## 🏗️ Architecture
+##  Architecture
 The project consists of three AWS EC2 instances:
 - **Jenkins Master** (Amazon Linux) - Manages CI/CD pipeline
 - **Jenkins Agent** (CentOS 8) - Builds and verifies artifacts
 - **Application Server** (Ubuntu 20.04) - Hosts Flask app with MongoDB
 
-## 🛠️ Technologies Used
+##  Technologies Used
 - **Flask** (Python Web Framework)
 - **MongoDB** (Database for storing app messages)
 - **Jenkins** (CI/CD Automation)
@@ -19,7 +19,7 @@ The project consists of three AWS EC2 instances:
 - **Certbot** (Let's Encrypt SSL Certificate)
 - **GitHub** (Version Control)
 
-## 🔧 Infrastructure Setup
+##  Infrastructure Setup
 | Server Name | OS | Role |
 |-------------|--------------|---------------------------------|
 | `jenkins-master` | Amazon Linux | Jenkins Master |
@@ -52,9 +52,13 @@ secure-flask-app/
 │   │-- flask_app.service.j2
 │   │-- index.html
 │   │
-│-- jenkins/
-│   │-- Jenkinsfile
+│-- Jenkinsfile
+│-- app_server.yml
+│-- hosts_inventory.ini
+│-- hosts_invventory1.ini
+│-- jenkins_agent.yml
 │-- README.md
+
 ```
 
 ## 🛠️ Installation & Deployment
@@ -77,7 +81,7 @@ pip3 install -r src/requirements.txt
 
 ### 4️⃣ Run Ansible Playbook
 ```bash
-ansible-playbook -i inventory ansible/deploy.yml
+ansible-playbook -i hosts_inventory jenkins_agent.yml
 ```
 
 ## ✅ Expected Output
@@ -85,11 +89,9 @@ ansible-playbook -i inventory ansible/deploy.yml
   ```
   Secure DevOps app deployed with verified artifact!
   ```
-- Accessible via `https://yourdomain.com`
+- Accessible via `https://secureflask.duckdns.org
 
 ## 🔮 Future Enhancements
-- Implement CI/CD for automatic rollback on failure
 - Add Prometheus & Grafana for monitoring
 - Implement Kubernetes for scalability
 
----
