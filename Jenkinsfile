@@ -8,7 +8,7 @@ pipeline {
         HASH_FILE = "hash.txt"
         DUCKDNS_TOKEN = credentials('duckdns-token')
         DUCKDNS_DOMAIN = 'secureflask.duckdns.org'
-        EMAIL_RECIPIENTS = "secure.duckdns.org"
+        EMAIL_RECIPIENTS = "secureflask.duckdns@duckdns.com"
         TEST_SERVER_URL = "https://secureflask.duckdns.org"
         APP_SERVER_IP = 'secureflask.duckdns.org'
         APP_SERVER_USER = 'ubuntu'
