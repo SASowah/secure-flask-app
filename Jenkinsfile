@@ -91,25 +91,6 @@ stage('Update DuckDNS IP') {
     }
 }
 
-//stage('Test Deployment') {
-//   steps {
-//        script {
-//            sh """
-//           ssh ${APP_SERVER_USER}@${APP_SERVER_IP} '
-//                for i in {1..5}; do
-//                    if curl -sfk ${TEST_SERVER_URL}; then
-//                        exit 0
-//                    fi
-//                    sleep 10
-//                done
-//                echo "❌ App did not become reachable after 5 attempts"
-//                exit 1
-//            '
-//            """
-//        }
-//    }
-//}
-
         stage('Cleanup and Rollback (If Necessary)') {
             when {
                 expression {
