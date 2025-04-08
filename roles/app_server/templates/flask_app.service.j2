@@ -4,8 +4,9 @@ After=network.target
 
 [Service]
 User={{ app_user }}
-Group={{ app_group }}
+Group=www-data
 WorkingDirectory={{ app_dir }}
+Environment="PATH=/opt/flask_app/venv/bin"
 ExecStart={{ app_dir }}/venv/bin/gunicorn --workers 3 --bind 0.0.0.0:5000 app:app
 
 
