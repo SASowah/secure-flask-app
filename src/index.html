@@ -1,58 +1,13 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Secure Flask App</title>
-    <style>
-        /* Body styling */
-        body {
-            background-image: url('https://images.unsplash.com/photo-1580565782741-8ca2a48258b7?crop=entropy&cs=tinysrgb&fit=max&ixid=MXwyMDg2MnwwfDF8c2VhcmNofDJ8fG5vZGVfcGVybmV0fGVufDB8fHx8fDE2ODU2NzEzMjM&ixlib=rb-1.2.1&q=80&w=1080');
-	    background-size: cover; /* Make the background cover the entire page */
-            background-position: center; /* Center the background image */
-            background-attachment: fixed; /* Keep the background fixed while scrolling */
-            color: white; /* White text for contrast */
-            font-family: Arial, sans-serif; /* Clean font */
-            text-align: center; /* Center the text */
-            height: 100vh; /* Full viewport height */
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-        }
-
-        h1 {
-            font-size: 2.5em;
-            margin: 10px 0;
-        }
-
-        h2 {
-            font-size: 1.5em;
-            margin-top: 10px;
-        }
-
-        ul {
-            list-style-type: none;
-            padding: 0;
-            margin-top: 20px;
-        }
-
-        li {
-            display: inline-block;
-            margin: 10px 20px;
-            font-size: 1.2em;
-        }
-    </style>
-</head>
+<html>
+<head><title>Secure Flask App</title></head>
 <body>
-    <h1>Secure DevOps app deployed with verified artifact!</h1>
-    <h2>This App was built by Omotola Komaiya, George Somina, and Samuel Sowah</h2>
-    
-    <!-- Loop through messages and display them -->
-    <ul>
-        {% for msg in messages %}
-            <li>{{ msg['text'] }}</li>
-        {% endfor %}
-    </ul>
+  <h1>Secure DevOps app deployed with verified artifact!</h1>
+  <h1>This App was built by Omotola Komaiya, George Somina,and Samuel Sowah, </h1>
+  <ul>
+    {% for msg in messages %}
+      <li>{{ msg['text'] }}</li>
+    {% endfor %}
+  </ul>
 </body>
 </html>
