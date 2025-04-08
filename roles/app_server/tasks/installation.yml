@@ -35,10 +35,17 @@
     - python3-certbot-nginx
   when: ansible_distribution == "CentOS"
 
-- name: create a virtual environment
-  command:
-    cmd: "python3 -m venv {{ app_dir }}/venv"
+- name: Ensure Python3 venv is present
+  apt:
+    name: python3-venv
+    state: present
+  become: yes
+
+- name: Create virtual environment
+  command: python3 -m venv {{ app_dir }}/venv
+  args:
     creates: "{{ app_dir }}/venv"
+
 
 - name: Install Flask and Gunicorn using python3-pip
   become: yes # This enables privilege escalation
